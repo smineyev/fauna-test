@@ -3,6 +3,7 @@ package fauna.test;
 import com.faunadb.client.types.Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.faunadb.client.FaunaClient;
@@ -72,6 +73,7 @@ class AppTest {
         System.out.println("Connected to Fauna database " + DB_NAME + " with server role\n");
     }
 
+    @Disabled
     @Test void perfTest() throws Exception {
         timeit(""+N+" docs added",
                 () -> IntStream.range(0, N).forEach(

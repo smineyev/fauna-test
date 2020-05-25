@@ -2,17 +2,12 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:2.0.1")
-    }
 }
 
 plugins {
-    java
-    application
+    id 'java'
+    id 'application'
 }
-apply(plugin = "com.github.johnrengelman.shadow")
-
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
@@ -30,14 +25,21 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 }
 
-val mainClassName = "fauna.test.App"
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'fauna.test.App'
+    }
+    baseName = 'all-in-one-jar'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
 
 application {
     // Define the main class for the application.
-    this.mainClassName = mainClassName
+    mainClassName = "fauna.test.App"
 }
 
-val test by tasks.getting(Test::class) {
+test {
     // Use junit platform for unit tests
     useJUnitPlatform()
 }
