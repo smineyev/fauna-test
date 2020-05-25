@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:2.0.1")
+    }
+}
+
+plugins {
+    java
+    application
+}
+apply(plugin = "com.github.johnrengelman.shadow")
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    // This dependency is used by the application.
+    implementation("com.faunadb:faunadb-java:2.12.0")
+
+    // Use JUnit Jupiter API for testing.
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+}
+
+val mainClassName = "fauna.test.App"
+
+application {
+    // Define the main class for the application.
+    this.mainClassName = mainClassName
+}
+
+val test by tasks.getting(Test::class) {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
