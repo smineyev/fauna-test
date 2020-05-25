@@ -17,7 +17,7 @@ class App {
     static String DB_NAME = "demo";
     static String POSTS_COLLECTION = "posts";
     static String POSTS_INDEX = "posts_index";
-    static int N = 100;
+    static int N = 1000;
 
     static FaunaClient adminClient;
     static FaunaClient client;
