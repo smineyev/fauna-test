@@ -17,6 +17,7 @@ class App {
     static String DB_NAME = "demo";
     static String POSTS_COLLECTION = "posts";
     static String POSTS_INDEX = "posts_index";
+    static String POSTS_BY_TITLE_INDEX = "posts_by_title_index";
     static int N = 1000;
 
     static FaunaClient adminClient;
@@ -41,12 +42,23 @@ class App {
         ).get();
         System.out.println("Create Collection for " + DB_NAME + ":\n " + collectionResults + "\n");
 
-        Value indexResults = client.query(
+        Value allIndexResults = client.query(
                 CreateIndex(
                         Obj("name", Value(POSTS_INDEX), "source", Collection(Value(POSTS_COLLECTION)))
                 )
         ).get();
-        System.out.println("Create Index for " + DB_NAME + ":\n " + indexResults + "\n");
+        System.out.println("Create Index for " + DB_NAME + ":\n " + allIndexResults + "\n");
+
+        Value indexByTitleResults = client.query(
+                CreateIndex(
+                        Obj("name", Value(POSTS_BY_TITLE_INDEX),
+                            "source", Collection(Value(POSTS_COLLECTION)),
+                            "terms", Arr(
+                                    Obj("field",
+                                            Arr(Value("data"), Value("title")))))
+                )
+        ).get();
+        System.out.println("Create Index for " + DB_NAME + ":\n " + indexByTitleResults + "\n");
     }
 
     private static void createDb() throws InterruptedException, java.util.concurrent.ExecutionException {
@@ -80,13 +92,23 @@ class App {
                 () -> {
                     createPosts(N+1, N);
                 });
-        timeit("doc fetched",
+        timeit("all docs fetched",
                 () -> {
                     var queryIndexResults = client.query(
                             SelectAll(Path("data", "id"),
                                     Paginate(
                                             Match(Index(Value(POSTS_INDEX)))
                                     ))
+                    ).get();
+                    System.out.println(queryIndexResults);
+                });
+
+        timeit("some docs fetched",
+                () -> {
+                    var queryIndexResults = client.query(
+                                    Get(
+                                        Match(Index(Value(POSTS_BY_TITLE_INDEX)), Value("Post #1"))
+                                    )
                     ).get();
                     System.out.println(queryIndexResults);
                 });
@@ -98,7 +120,7 @@ class App {
                         exprCreatePost(startFrom, num)
                 )
         ).get();
-        System.out.println("Added "+num+" to " + POSTS_COLLECTION + ":\n " + res + "\n");
+        System.out.println("Added "+num+" to " + POSTS_COLLECTION + ":\n " + res);
     }
 
     private static List<Expr> exprCreatePost(int startFrom, int num) {
