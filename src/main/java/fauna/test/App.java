@@ -18,7 +18,7 @@ class App {
     static String POSTS_COLLECTION = "posts";
     static String POSTS_INDEX = "posts_index";
     static String POSTS_BY_TITLE_INDEX = "posts_by_title_index";
-    static int N = 1000;
+    static int N = 100;
 
     static FaunaClient adminClient;
     static FaunaClient client;
@@ -26,8 +26,12 @@ class App {
     static Random rnd = new Random();
 
     static void init() throws Exception {
+//        adminClient = FaunaClient.builder()
+//                .withSecret("fnADsqnRZ2ACATRbbZj3XmVttEmlFAYH6h22G2Vp")
+//                .build();
         adminClient = FaunaClient.builder()
-                .withSecret("fnADsqnRZ2ACATRbbZj3XmVttEmlFAYH6h22G2Vp")
+                .withSecret("secret")
+                .withEndpoint("http://localhost:8443")
                 .build();
 
         createDb();
